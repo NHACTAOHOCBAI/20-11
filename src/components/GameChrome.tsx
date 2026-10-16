@@ -11,5 +11,6 @@ export function GameChrome({ gameId, results, children }: { gameId: GameId; resu
 }
 
 export function GameResultCard({ result, nextLabel, onNext }: { result: GameResult; nextLabel: string; onNext: () => void }) {
-  return <div className="round-result-backdrop" role="dialog" aria-modal="true" aria-label={`Kết quả ${result.gameName}`}><section className="round-result" aria-live="polite"><span>{result.gameName}</span><h2>Chị nhận được {formatMoney(result.prize.value)}</h2><p>Phần quà đã được cộng vào tổng tiền thưởng.</p><button onClick={onNext}>{nextLabel}</button></section></div>
+  const memory = result.memory
+  return <div className="round-result-backdrop" role="dialog" aria-modal="true" aria-label={`Kết quả ${result.gameName}`}><section className="round-result" aria-live="polite"><span>{result.gameName}</span><h2>Chị nhận được {formatMoney(result.prize.value)}</h2>{memory ? <div className="round-result-details"><b>Chị đã ghép đúng {memory.pairsMatched}/8 cặp thẻ</b><p>{memory.wrongAttempts === 3 ? 'Ván chơi dừng sau 3 lượt lật sai.' : 'Chị đã hoàn thành toàn bộ bàn thẻ.'}</p><small>Đã gồm quà khích lệ {formatMoney(memory.consolationValue)}.</small></div> : <p>Phần quà đã được cộng vào tổng tiền thưởng.</p>}<button onClick={onNext}>{nextLabel}</button></section></div>
 }

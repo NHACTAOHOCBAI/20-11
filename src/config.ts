@@ -1,4 +1,4 @@
-import type { Prize } from './types'
+import type { MemoryReward, Prize } from './types'
 
 export const prizes: Prize[] = [
   { id: 'gift-50', label: '50.000đ', value: 50000, color: '#6B2034', weight: 1 },
@@ -9,13 +9,17 @@ export const prizes: Prize[] = [
   { id: 'gift-1000', label: '1.000.000đ', value: 1000000, color: '#D9B66F', weight: 1 },
 ]
 
-export const cardPrizes: Prize[] = [
-  { id: 'card-20', label: '20.000đ', value: 20000, color: '#6B2034', weight: 4 },
-  { id: 'card-50', label: '50.000đ', value: 50000, color: '#F1E3D1', weight: 3 },
-  { id: 'card-100', label: '100.000đ', value: 100000, color: '#8B4658', weight: 2 },
-  { id: 'card-200', label: '200.000đ', value: 200000, color: '#E5CFA2', weight: 1 },
-  { id: 'card-300', label: '300.000đ', value: 300000, color: '#54202E', weight: 1 },
-  { id: 'card-500', label: '500.000đ', value: 500000, color: '#D9B66F', weight: 1 },
+export const memoryConsolationValue = 20000
+
+export const memoryPairRewards: MemoryReward[] = [
+  { pairNumber: 1, cardsRemaining: 14, value: 5000 },
+  { pairNumber: 2, cardsRemaining: 12, value: 10000 },
+  { pairNumber: 3, cardsRemaining: 10, value: 15000 },
+  { pairNumber: 4, cardsRemaining: 8, value: 20000 },
+  { pairNumber: 5, cardsRemaining: 6, value: 30000 },
+  { pairNumber: 6, cardsRemaining: 4, value: 40000 },
+  { pairNumber: 7, cardsRemaining: 2, value: 60000 },
+  { pairNumber: 8, cardsRemaining: 0, value: 100000 },
 ]
 
 export const piggyPrizes: Prize[] = [
