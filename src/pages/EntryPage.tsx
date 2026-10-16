@@ -1,26 +1,25 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowRight, Building2, Gift, LockKeyhole, UserRound } from 'lucide-react'
-import PhoneFrame from '../components/PhoneFrame'
+import { ArrowRight, Building2, ChevronDown, Gift, LockKeyhole, UserRound } from 'lucide-react'
+import AppShell from '../components/AppShell'
 import { banks } from '../config'
 import { createPendingSpin } from '../lib/supabase'
-import { hasCompletedSpin, setActiveSpin } from '../lib/storage'
+import { setActiveSpin } from '../lib/storage'
 
-type FormState = { name: string; bank: string; account: string; consent: boolean }
-const initial: FormState = { name: '', bank: '', account: '', consent: false }
+type FormState = { name: string; bank: string; account: string }
+const initial: FormState = { name: '', bank: '', account: '' }
 
 export default function EntryPage() {
   const navigate = useNavigate()
   const [form, setForm] = useState(initial)
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
-  const completed = hasCompletedSpin()
   const update = (key: keyof FormState, value: string | boolean) => setForm((old) => ({ ...old, [key]: value }))
 
   async function submit(event: FormEvent) {
     event.preventDefault(); setError('')
     const name = form.name.trim()
-    if (!name || !form.bank || !form.account || !form.consent) return setError('Vui lòng điền đủ thông tin và xác nhận cam kết.')
+    if (!name || !form.bank || !form.account) return setError('Vui lòng điền đủ thông tin.')
     if (!/^\d{6,19}$/.test(form.account)) return setError('Số tài khoản cần gồm 6–19 chữ số.')
     setSaving(true)
     try {
@@ -32,22 +31,46 @@ export default function EntryPage() {
     finally { setSaving(false) }
   }
 
-  return <PhoneFrame><div className="entry-page">
-    <header className="campaign-banner"><div className="banner-icon"><Gift size={18} /></div><div><b>Món Quà Special 20/10 🌸</b><span>Chúc ngày Phụ Nữ Việt Nam</span></div></header>
-    <div className="sparkle one">✦</div><div className="sparkle two">✧</div>
+  return <AppShell><div className="entry-page">
+    <section className="campaign-banner"><div className="banner-icon"><Gift size={20} /></div><div><b>Sẵn sàng nhận quà 20/10?</b><span>Điền thông tin để bắt đầu vòng quay may mắn của bạn.</span></div></section>
     <section className="entry-card">
       <p className="section-kicker">▧ Nhập thông tin nhận quà</p><p className="section-copy">Điền thông tin chính xác, quà sẽ được tự động chuyển ngay sau khi quay!</p>
-      {completed ? <div className="completed-message"><CheckMark />Bạn đã hoàn tất lượt quay trên thiết bị này. Cảm ơn chị đã tham gia!</div> : <form onSubmit={submit} noValidate>
+      <form onSubmit={submit} noValidate>
         <label>Họ và Tên của Chị <em>*</em><span className="field"><UserRound size={15} /><input value={form.name} onChange={(e) => update('name', e.target.value)} placeholder="Nguyễn Thị Mai Lan" autoComplete="name" /></span></label>
-        <label>Ngân hàng nhận thưởng (24/7) <em>*</em><span className="field"><Building2 size={15} /><select value={form.bank} onChange={(e) => update('bank', e.target.value)}><option value="">Chọn ngân hàng</option>{banks.map((bank) => <option key={bank}>{bank}</option>)}</select></span></label>
+        <label>Ngân hàng nhận thưởng (24/7) <em>*</em><BankSelect value={form.bank} onChange={(bank) => update('bank', bank)} /></label>
         <label>Số tài khoản ngân hàng <em>*</em><span className="field"><LockKeyhole size={15} /><input inputMode="numeric" value={form.account} onChange={(e) => update('account', e.target.value.replace(/\D/g, ''))} placeholder="098765432101" /></span></label>
-        <label className="consent"><input type="checkbox" checked={form.consent} onChange={(e) => update('consent', e.target.checked)} /><span>Tôi cam kết thông tin đúng và đồng ý nhận thưởng sự kiện 20/10.</span></label>
         {error && <p className="form-error" role="alert">{error}</p>}
         <button className="primary-button" disabled={saving}>{saving ? 'Đang tạo lượt chơi...' : <>Bắt đầu bốc thăm / Quay quà <ArrowRight size={18} /></>}</button>
-      </form>}
+      </form>
     </section>
-    <p className="footer-status">• Đã có 142/150 chị em nhận thưởng hôm nay ✨</p>
-  </div></PhoneFrame>
+    <p className="page-note">Thông tin của bạn chỉ được dùng để ghi nhận phần quà.</p>
+  </div></AppShell>
 }
 
-function CheckMark() { return <span className="checkmark">✓</span> }
+function BankSelect({ value, onChange }: { value: string; onChange: (bank: string) => void }) {
+  const [open, setOpen] = useState(false)
+  const rootRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const closeOnOutsideClick = (event: MouseEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', closeOnOutsideClick)
+    return () => document.removeEventListener('mousedown', closeOnOutsideClick)
+  }, [])
+
+  function choose(bank: string) { onChange(bank); setOpen(false) }
+  function onKeyDown(event: KeyboardEvent<HTMLButtonElement>) {
+    if (event.key === 'Escape') setOpen(false)
+    if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); setOpen((current) => !current) }
+  }
+
+  return <div className="bank-select" ref={rootRef}>
+    <button type="button" className="bank-trigger" aria-haspopup="listbox" aria-expanded={open} onClick={() => setOpen((current) => !current)} onKeyDown={onKeyDown}>
+      <Building2 size={16} /><span className={value ? '' : 'placeholder'}>{value || 'Chọn ngân hàng'}</span><ChevronDown className={open ? 'chevron-open' : ''} size={18} />
+    </button>
+    {open && <ul className="bank-options" role="listbox" aria-label="Danh sách ngân hàng">
+      {banks.map((bank) => <li key={bank} role="option" aria-selected={bank === value}><button type="button" className={bank === value ? 'selected' : ''} onClick={() => choose(bank)}>{bank}</button></li>)}
+    </ul>}
+  </div>
+}

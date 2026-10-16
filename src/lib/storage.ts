@@ -1,10 +1,7 @@
-import type { PlayerDetails, Prize } from '../types'
+import type { PlayerDetails } from '../types'
 
 const ENTRY_KEY = 'lucky-wheel-entry-id'
 const DETAILS_KEY = 'lucky-wheel-player'
-const COMPLETED_KEY = 'lucky-wheel-completed'
-
-export const hasCompletedSpin = () => localStorage.getItem(COMPLETED_KEY) === 'true'
 export const getEntryId = () => sessionStorage.getItem(ENTRY_KEY)
 export const setActiveSpin = (entryId: string, details: PlayerDetails) => {
   sessionStorage.setItem(ENTRY_KEY, entryId)
@@ -21,7 +18,6 @@ export const getClientSessionId = () => {
   if (!id) { id = crypto.randomUUID(); sessionStorage.setItem(key, id) }
   return id
 }
-export const markCompleted = (_prize: Prize) => localStorage.setItem(COMPLETED_KEY, 'true')
 export const clearActiveSpin = () => {
   sessionStorage.removeItem(ENTRY_KEY)
   sessionStorage.removeItem(DETAILS_KEY)
