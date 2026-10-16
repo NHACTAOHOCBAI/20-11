@@ -26,7 +26,7 @@ export default function EntryPage() {
       const details = { participant_name: name, bank_name: form.bank, account_number: form.account }
       const id = await createPendingSpin(details)
       setActiveSpin(id, details)
-      navigate('/wheel')
+      navigate('/game/wheel')
     } catch (cause) { setError(cause instanceof Error ? cause.message : 'Không thể lưu lượt chơi. Vui lòng thử lại.') }
     finally { setSaving(false) }
   }

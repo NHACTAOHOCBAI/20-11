@@ -16,7 +16,8 @@ npm run dev
 
 1. Tạo project trên Supabase.
 2. Mở SQL Editor, chạy nội dung tại `supabase/migrations/20261016_create_spin_entries.sql`.
-3. Sao chép Project URL và anon/public key vào `.env` (và biến môi trường của Vercel).
+3. Chạy tiếp `supabase/migrations/20261016_add_three_game_session.sql` để bật chuỗi 3 mini-game, tiến độ và tổng tiền.
+4. Sao chép Project URL và anon/public key vào `.env` (và biến môi trường của Vercel).
 
 RLS không cấp quyền đọc bảng `spin_entries`; người dùng ẩn danh chỉ có thể insert/update. Tuy nhiên, vì người chơi không đăng nhập và kết quả được chọn trong browser, đây chỉ là mô hình dành cho demo/campaign đơn giản: không thể ngăn triệt để request giả mạo hoặc sửa một ID đã biết. Với chiến dịch có tiền thưởng thật, hãy chuyển chọn giải và ghi kết quả vào Edge Function có rate-limit/CAPTCHA hoặc dùng xác thực người dùng.
 

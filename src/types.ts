@@ -1,4 +1,5 @@
-export type SpinStatus = 'pending' | 'completed'
+export type SpinStatus = 'pending' | 'in_progress' | 'completed'
+export type GameId = 'wheel' | 'cards' | 'piggy'
 
 export type Prize = {
   id: string
@@ -21,3 +22,6 @@ export type SpinEntry = {
 }
 
 export type PlayerDetails = Pick<SpinEntry, 'participant_name' | 'bank_name' | 'account_number'>
+
+export type GameResult = { gameId: GameId; gameName: string; prize: Prize }
+export type GameProgress = { currentGame: GameId; results: GameResult[] }

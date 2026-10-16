@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import type { PlayerDetails, Prize } from '../types'
+import type { GameProgress, PlayerDetails } from '../types'
 import { getClientSessionId } from './storage'
 
 const url = import.meta.env.VITE_SUPABASE_URL
@@ -13,16 +13,21 @@ export async function createPendingSpin(details: PlayerDetails) {
   const id = crypto.randomUUID()
   const { error } = await supabase
     .from('spin_entries')
-    .insert({ id, ...details, status: 'pending', client_session_id: getClientSessionId() })
+    .insert({ id, ...details, status: 'in_progress', current_game: 'wheel', game_results: [], total_value: 0, client_session_id: getClientSessionId() })
   if (error) throw error
   return id
 }
 
-export async function completeSpin(entryId: string, prize: Prize) {
+export async function saveGameProgress(entryId: string, progress: GameProgress, isComplete = false) {
   if (!supabase) throw new Error(missingConfig)
-  const { error } = await supabase
-    .from('spin_entries')
-    .update({ status: 'completed', prize_id: prize.id, prize_label: prize.label, prize_value: prize.value, completed_at: new Date().toISOString() })
-    .eq('id', entryId)
+  const total = progress.results.reduce((sum, result) => sum + result.prize.value, 0)
+  const update = {
+    current_game: progress.currentGame,
+    game_results: progress.results,
+    total_value: total,
+    status: isComplete ? 'completed' : 'in_progress',
+    ...(isComplete ? { prize_id: 'total-3-games', prize_label: 'Tổng tiền 3 trò', prize_value: total, completed_at: new Date().toISOString() } : {}),
+  }
+  const { error } = await supabase.from('spin_entries').update(update).eq('id', entryId)
   if (error) throw error
 }
